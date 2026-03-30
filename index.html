@@ -53,9 +53,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4fef9; color: #
 .so-date  { margin-left: auto; font-size: 11px; font-weight: 700; color: #68d391; }
 .hint-bar { margin-top: 8px; font-size: 9px; color: #a0aec0; text-align: center; }
 .hint-bar span { margin: 0 6px; }
-.legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 9.5px; color: #4a5568; }
-.legend-item { display: flex; align-items: center; gap: 4px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
 .save-indicator { position: fixed; bottom: 16px; right: 16px; background: #38a169; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
 .save-indicator.show { opacity: 1; }
 </style>
@@ -69,7 +66,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4fef9; color: #
   <div class="g-icon">&#127919;</div>
   <div>
     <div class="g-label">Ultimate Goal</div>
-    <div class="g-title">Close all open items &amp; obtain management sign-off to proceed to Due Diligence (DD)</div>
+    <div class="g-title">Close all open items &amp; obtain management sign-off to proceed to Detail Design (DD)</div>
   </div>
 </div>
 <div class="gantt-wrap" id="gantt"></div>
@@ -80,29 +77,28 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4fef9; color: #
   <span>&#x25cf; dot to change colour</span> &middot;
   <span><b>&#43; Add Task</b> to add a new row</span>
 </div>
-<div id="legend" class="legend"></div>
 <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
 <script>
-var DAYS=[{name:"Mon",date:"30 Mar"},{name:"Tue",date:"31 Mar"},{name:"Wed",date:"1 Apr"},{name:"Thu",date:"2 Apr"},{name:"Fri",date:"3 Apr"},{name:"Sat",date:"4 Apr"},{name:"Sun",date:"5 Apr"}];
+var DAYS=["Mon","Tue","Wed","Thu","Fri"];
 var COLORS=["#e53e3e","#dd6b20","#d69e2e","#38a169","#319795","#3182ce","#6b46c1","#1a365d"];
 var DEFAULT_TASKS=[
   {id:1,name:"Penthouse Layout Solution",sub:"Investigate replication across both towers",owner:"Yara / Jack",start:0,end:0,color:"#e53e3e"},
   {id:2,name:"Email Chris & Emaar ID Team",sub:"Confirm penthouse solution in writing",owner:"Jack",start:0,end:0,color:"#e53e3e"},
-  {id:3,name:"Review Lauren's Plan of Action",sub:"Expected shortly — incorporate into plan",owner:"Jack / Piyush",start:0,end:0,color:"#e53e3e"},
-  {id:4,name:"STR — Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:1,color:"#3182ce"},
-  {id:5,name:"BIM — Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:1,color:"#319795"},
-  {id:6,name:"Client Approval — Penthouse",sub:"Written confirmation from Chris / Emaar",owner:"Chris",start:1,end:2,color:"#d69e2e"},
-  {id:7,name:"STR Resubmission — Confirm Closure",sub:"Key item for DD sign-off",owner:"Jack / STR",start:1,end:2,color:"#3182ce"},
-  {id:8,name:"ID Resubmission — Penthouse Update",sub:"Light update only — post client approval",owner:"ID Team",start:2,end:4,color:"#319795"},
-  {id:9,name:"BIM Status — Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
-  {id:10,name:"Consolidated Client Summary",sub:"All items closed — prepared for Emaar mgmt",owner:"Jack / Piyush",start:4,end:6,color:"#1a365d"}
+  {id:3,name:"Review Lauren's Plan of Action",sub:"Expected shortly â incorporate into plan",owner:"Jack / Piyush",start:0,end:0,color:"#e53e3e"},
+  {id:4,name:"STR â Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:1,color:"#3182ce"},
+  {id:5,name:"BIM â Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:1,color:"#319795"},
+  {id:6,name:"Client Approval â Penthouse",sub:"Written confirmation from Chris / Emaar",owner:"Chris",start:1,end:2,color:"#d69e2e"},
+  {id:7,name:"STR Resubmission â Confirm Closure",sub:"Key item for DD sign-off",owner:"Jack / STR",start:1,end:2,color:"#3182ce"},
+  {id:8,name:"ID Resubmission â Penthouse Update",sub:"Light update only â post client approval",owner:"ID Team",start:2,end:4,color:"#319795"},
+  {id:9,name:"BIM Status â Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
+  {id:10,name:"Consolidated Client Summary",sub:"All items closed â prepared for Emaar mgmt",owner:"Jack / Piyush",start:4,end:6,color:"#1a365d"}
 ];
 var SECTIONS=[
-  {beforeId:1,label:"Day 1 — Immediate Actions (30 Mar)"},
-  {beforeId:4,label:"Day 1–2 — Follow-Ups in Progress"},
-  {beforeId:6,label:"Day 2–3 — Awaiting Approvals"},
-  {beforeId:8,label:"Day 3–5 — Updates & Confirmation"},
-  {beforeId:10,label:"Day 5–7 — Client Summary & Sign-Off"}
+  {beforeId:1,label:"Day 1 â Immediate Actions (30 Mar)"},
+  {beforeId:4,label:"Day 1â2 â Follow-Ups in Progress"},
+  {beforeId:6,label:"Day 2â3 â Awaiting Approvals"},
+  {beforeId:8,label:"Day 3â5 â Updates & Confirmation"},
+  {beforeId:10,label:"Day 5â7 â Client Summary & Sign-Off"}
 ];
 var STORAGE_KEY="sw11_gantt_tasks";
 function saveTasks(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));showSaved();}catch(e){}}
@@ -143,13 +139,9 @@ function render(){
     if(sec)h+="<div class=\"section-row\">"+esc(sec.label)+"</div>";
     h+=buildRow(task);
   });
-  h+="<div class=\"add-row\"><button class=\"add-btn\" onclick=\"addTask()\">&#43; Add Task</button></div>";
-  h+="<div class=\"signoff-row\"><div class=\"so-icon\">&#128640;</div><div><div class=\"so-title\">Management Sign-Off &mdash; Proceed to Due Diligence</div><div class=\"so-sub\">All open items closed &middot; STR &#10003; &middot; Penthouse &#10003; &middot; ID Update &#10003; &middot; BIM &#10003;</div></div><div class=\"so-date\">~5 Apr 2026</div></div>";
+  h+="<div class=\"add-row\" style=\"display:flex;align-items:center;gap:4px;flex-wrap:wrap;\"><span style=\"font-size:11px;color:#666;margin-right:2px;\">+ Add task on:</span><button class=\"add-btn\" onclick=\"addTask(0)\">Mon</button><button class=\"add-btn\" onclick=\"addTask(1)\">Tue</button><button class=\"add-btn\" onclick=\"addTask(2)\">Wed</button><button class=\"add-btn\" onclick=\"addTask(3)\">Thu</button><button class=\"add-btn\" onclick=\"addTask(4)\">Fri</button></div>";
+  h+="<div class=\"signoff-row\"><div class=\"so-icon\">&#128640;</div><div><div class=\"so-title\">Management Sign-Off &mdash; Proceed to Detail Design</div><div class=\"so-sub\">All open items closed &middot; STR &#10003; &middot; Penthouse &#10003; &middot; ID Update &#10003; &middot; BIM &#10003;</div></div><div class=\"so-date\">~5 Apr 2026</div></div>";
   g.innerHTML=h;
-}
-function renderLegend(){
-  var items=[{color:"#e53e3e",label:"Urgent — Action Today"},{color:"#3182ce",label:"STR Track"},{color:"#d69e2e",label:"Awaiting Approval"},{color:"#319795",label:"ID Updates"},{color:"#319795",label:"BIM Track"},{color:"#1a365d",label:"Summary & Sign-Off"}];
-  document.getElementById("legend").innerHTML=items.map(function(i){return "<div class=\"legend-item\"><div class=\"legend-dot\" style=\"background:"+i.color+"\"></div>"+esc(i.label)+"</div>";}).join("");
 }
 var dragState=null;
 function startDrag(e,taskId,type){
@@ -184,8 +176,8 @@ function onDrop(){
   document.removeEventListener("mouseup",onDrop);
 }
 function deleteTask(id){tasks=tasks.filter(function(t){return t.id!==id;});saveTasks();render();}
-function addTask(){
-  tasks.push({id:nextId++,name:"New Task",sub:"Description",owner:"Owner",start:0,end:1,color:COLORS[0]});
+function addTask(s){
+  tasks.push({id:nextId++,name:"New Task",sub:"Description",owner:"Owner",start:s||0,end:(s||0)+1,color:COLORS[0]});
   saveTasks();render();
   var r=document.querySelector("[data-id=\""+( nextId-1)+"\"] .task-name");
   if(r){r.focus();document.execCommand("selectAll",false,null);}
@@ -208,7 +200,6 @@ function saveField(id,field,value){
 }
 function blurOnEnter(e){if(e.key==="Enter"){e.preventDefault();e.target.blur();}}
 render();
-renderLegend();
 </script>
 </body>
 </html>
