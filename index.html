@@ -2,267 +2,247 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>SW 11 SD Approval Roadmap</title>
-      <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4fef9; color: #2d3748; padding: 24px; min-width: 860px; }
-      .header { background: #0f1e35; border-radius: 10px; padding: 18px 28px; text-align: center; margin-bottom: 14px; }
-      .header h1 { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.4px; }
-      .header p { font-size: 12px; color: #90a8c3; margin-top: 5px; }
-      .goal-banner { background: linear-gradient(135deg, #1a365d, #2b6cb0); border-radius: 8px; padding: 12px 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-      .goal-banner .g-icon { font-size: 18px; }
-      .goal-banner .g-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bee3f8; }
-      .goal-banner .g-title { font-size: 13px; font-weight: 700; color: #fff; margin-top: 2px; }
-      .gantt-wrap { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); min-height: 320px; overflow: hidden; }
-      .g-row { display: flex; align-items: stretch; border-bottom: 1px solid #f0f4f8; min-height: 32px; position: relative; }
-.row-drag-handle { cursor: ns-resize; padding: 0 6px; opacity: 0.35; font-size: 13px; user-select: none; display: flex; align-items: center; flex-shrink: 0; color: #718096; }
-.row-drag-handle:hover { opacity: 0.8; }
-.g-row.dragging-row { opacity: 0.4; background: #bee3f8; }
-.g-row.drag-over-top { box-shadow: 0 -2px 0 #3182ce; }
-.g-row.drag-over-bottom { box-shadow: 0 2px 0 #3182ce; }
-      .task-cell { width: 220px; min-width: 220px; padding: 6px 10px; display: flex; align-items: flex-start; gap: 6px; border-right: 1px solid #e8f0f7; position: relative; }
-      .task-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; cursor: pointer; }
-      .task-dot:hover { transform: scale(1.4); }
-      .task-text { flex: 1; min-width: 0; }
-      .task-name { font-size: 11px; font-weight: 600; color: #2d3748; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; outline: none; display: block; }
-      .task-name:focus { white-space: normal; overflow: visible; background: #f0f9ff; border-radius: 3px; padding: 1px 3px; }
-      .task-sub { font-size: 9px; color: #718096; margin-top: 1px; white-space: nowrap; overflow: hidden; text-hoverflow: ellipsis; cursor: text; outline: none; display: block; }
-      .task-sub:focus { white-space: normal; overflow: visible; background: #f0f9ff; border-radius: 3px; }
-      .delete-btn { opacity: 0; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: #fed7d7; border: none; border-radius: 3px; color: #c53030; font-size: 9px; padding: 2px 5px; cursor: pointer; transition: opacity .15s; }
-      .task-cell:hover .delete-btn { opacity: 1; }
-      .owner-cell { width: 80px; min-width: 80px; padding: 6px 8px; font-size: 9.5px; color: #4a5568; display: flex; align-items: center; border-right: 1px solid #e8f0f7; cursor: text; outline: none; }
-      .owner-cell:focus { background: #f0f9ff; }
-      .timeline-cell { flex: 1; position: relative; min-height: 32px; }
-      .grid-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #f0f4f8; pointer-events: none; }
-      .g-bar { position: absolute; top: 50%; transform: translateY(-50%); height: 20px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 9.5px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: grab; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: box-shadow .1s; }
-      .g-bar:active { cursor: grabbing; box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
-      .resize-handle { position: absolute; top: 0; bottom: 0; width: 6px; cursor: ew-resize; }
-      .resize-handle.left { left: 0; }
-      .resize-handle.right { right: 0; }
-      .header-row { display: flex; background: #1a365d; border-radius: 10px 10px 0 0; color: #fff; font-size: 10px; font-weight: 700; min-height: 36px; }
-      .h-task { width: 220px; min-width: 220px; padding: 8px 10px; border-right: 1px solid #2a4a7f; display: flex; align-items: center; }
-      .h-owner { width: 80px; min-width: 80px; padding: 8px 8px; border-right: 1px solid #2a4a7f; display: flex; align-items: center; }
-      .h-day { flex: 1; padding: 4px 6px; text-align: center; border-right: 1px solid #2a4a7f; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-      .h-day:last-child { border-right: none; }
-      .h-day .day-name { font-size: 10px; font-weight: 700; }
-      .h-day .day-date { font-size: 8.5px; opacity: .7; margin-top: 1px; }
-      .add-row { padding: 4px 0 4px 4px; display: flex; align-items: center; border-top: 1px solid #e8f0f7; position: relative; }
-      .add-row-btn { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #4a90d9; background: #fff; color: #4a90d9; font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); flex-shrink: 0; }
-      .add-row-btn:hover { background: #4a90d9; color: #fff; box-shadow: 0 2px 6px rgba(74,144,217,0.4); }
-      .add-row-line { flex: 1; height: 2px; background: #4a90d9; opacity: 0; transition: opacity .15s; margin-left: 2px; }
-      .add-row:hover .add-row-line { opacity: 0.3; }
-      .signoff-row { background: #1a365d; color: #fff; display: flex; align-items: center; padding: 10px 14px; border-radius: 0 0 10px 10px; }
-      .so-icon { font-size: 18px; margin-right: 10px; }
-      .so-title { font-size: 12px; font-weight: 700; }
-      .so-sub { font-size: 9px; color: #90cdf4; margin-top: 2px; }
-      .so-date { margin-left: auto; font-size: 11px; font-weight: 700; color: #68d391; }
-      .hint-bar { margin-top: 8px; font-size: 9px; color: #a0aec0; text-align: center; }
-      .hint-bar span { margin: 0 6px; }
-      .save-indicator { position: fixed; bottom: 16px; right: 16px; background: #38a169; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-      .save-indicator.show { opacity: 1; }
-      </style>
-      </head>
-      <body>
-      <div class="header">
-        <h1>SW 11 SD Approval Roadmap</h1>
-          <p>1-Week Action Plan &middot; 30 March &ndash; 5 April 2026</p>
-          </div>
-          <div class="goal-banner">
-            <div class="g-icon">&#127919;</div>
-              <div>
-                  <div class="g-label">Ultimate Goal</div>
-                      <div class="g-title">Close all open items &amp; obtain management sign-off to proceed to Detail Design (DD)</div>
-                        </div>
-                        </div>
-                        <div class="gantt-wrap" id="gantt"></div>
-                        <div class="hint-bar">
-                          &#128161; <span><b>Click</b> task name or owner to edit</span> &middot;
-                            <span><b>Drag</b> bar to move</span> &middot;
-                              <span><b>Drag edges</b> to resize</span> &middot;
-                                <span>&#x25cf; dot to change colour</span> &middot;
-                                  <span><b>&#43;</b> button below table to add row</span>
-                                  </div>
-                                  <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
-                                  <script>
-                                  var DAYS=[
-                                    {name:"Mon",date:"30 Mar"},
-                                      {name:"Tue",date:"31 Mar"},
-                                        {name:"Wed",date:"1 Apr"},
-                                          {name:"Thu",date:"2 Apr"},
-                                            {name:"Fri",date:"3 Apr"},
-                                                  {name:"Sat",date:"4 Apr"},
-                                                        {name:"Sun",date:"5 Apr"},
-                                                              {name:"Mon",date:"6 Apr"},
-                                                                    {name:"Tue",date:"7 Apr"},
-                                                                          {name:"Wed",date:"8 Apr"},
-                                                                                {name:"Thu",date:"9 Apr"},
-                                                                                      {name:"Fri",date:"10 Apr"}
-                                            ];
-                                            var COLORS=["#e53e3e","#dd6b20","#d69e2e","#38a169","#319795","#3182ce","#6b46c1","#1a365d"];
-                                            var DEFAULT_TASKS=[
-                                              {id:1,name:"Penthouse Layout Solution - ID",sub:"Investigate replication across both towers",owner:"Yara / Jack",start:0,end:1,color:"#e53e3e"},
-                                                {id:2,name:"Email Chris & Emaar ID Team",sub:"Confirm penthouse solution in writing",owner:"Jack",start:1,end:2,color:"#e53e3e"},
-                                                  {id:3,name:"Review Lauren's Plan of Action",sub:"Expected shortly \u2014 incorporate into plan",owner:"Jack / Piyush",start:0,end:1,color:"#e53e3e"},
-                                                    {id:4,name:"STR \u2014 Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:2,color:"#3182ce"},
-                                                      {id:5,name:"BIM \u2014 Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:2,color:"#319795"},
-                                                        {id:6,name:"Issue revised Layout to Client - ID",sub:"Written confirmation from Chris / Emaar",owner:"Chris",start:2,end:3,color:"#d69e2e"},
-                                                          {id:7,name:"STR Resubmission \u2014 Confirm Closure",sub:"Key item for DD sign-off",owner:"Jack / STR",start:2,end:3,color:"#3182ce"},
-                                                            {id:8,name:"ID Resubmission \u2014 Penthouse Update",sub:"Light update only \u2014 post client approval",owner:"ID Team",start:2,end:4,color:"#319795"},
-                                                              {id:9,name:"BIM Status \u2014 Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
-                                                                {id:10,name:"Consolidated Client Summary",sub:"All items closed \u2014 prepared for Emaar mgmt",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"}
-                                                                ];
-                                                                var SECTIONS=[
-                                                                  {beforeId:1,label:"Day 1 \u2014 Immediate Actions (30 Mar)"},
-                                                                    {beforeId:4,label:"Day 1\u20132 \u2014 Follow-Ups in Progress"},
-                                                                      {beforeId:6,label:"Day 2\u20133 \u2014 Awaiting Approvals"},
-                                                                        {beforeId:8,label:"Day 3\u20135 \u2014 Updates & Confirmation"},
-                                                                          {beforeId:10,label:"Day 5\u20137 \u2014 Client Summary & Sign-Off"}
-                                                                          ];
-                                                                          var STORAGE_KEY="sw11_gantt_tasks";
-                                                                          function saveTasks(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));showSaved();}catch(e){}}
-                                                                          function loadTasks(){try{var s=localStorage.getItem(STORAGE_KEY);if(s){var p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p;}}catch(e){}return DEFAULT_TASKS.map(function(t){return Object.assign({},t);});}
-                                                                          var _st;
-                                                                          function showSaved(){var el=document.getElementById("saveIndicator");el.classList.add("show");clearTimeout(_st);_st=setTimeout(function(){el.classList.remove("show");},1500);}
-                                                                          var tasks=loadTasks();
-                                                                          var nextId=tasks.reduce(function(m,t){return Math.max(m,t.id);},0)+1;
-                                                                          function pct(n){return(n/DAYS.length*100).toFixed(4)+"%";}
-                                                                          function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-                                                                          function barStyle(t){return "left:"+pct(t.start)+";width:"+pct(Math.max(t.end-t.start,0.15))+";background:"+t.color+";";}
-                                                                          function buildRow(task){
-                                                                            var id=task.id;
-                                                                              var gl=DAYS.map(function(_,i){return "<div class=\"grid-line\" style=\"left:"+pct(i)+"\"></div>";}).join("");
-                                                                                return "<div class=\"g-row\" data-id=\""+id+"\">"+
-                                                                                    "<div class=\"task-cell\">"+
-                                                                                        "<div class=\"row-drag-handle\" onmousedown=\"startRowDrag(event,"+id+")\" title=\"Drag to reorder\">&#8597;</div>"+
-            "<div class=\"task-dot\" style=\"background:"+task.color+"\" title=\"Click to change colour\" onclick=\"cycleColor("+id+")\"></div>"+
-                                                                                            "<div class=\"task-text\">"+
-                                                                                                "<span class=\"task-name\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;name&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.name)+"</span>"+
-                                                                                                    "<span class=\"task-sub\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;sub&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.sub)+"</span>"+
-                                                                                                        "</div>"+
-                                                                                                            "<button class=\"delete-btn\" onclick=\"deleteTask("+id+")\" title=\"Delete row\">&#10005;</button>"+
-                                                                                                                "</div>"+
-                                                                                                                    "<div class=\"owner-cell\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;owner&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.owner)+"</div>"+
-                                                                                                                        "<div class=\"timeline-cell\" id=\"tl"+id+"\">"+gl+
-                                                                                                                            "<div class=\"g-bar\" id=\"bar"+id+"\" style=\""+barStyle(task)+"\" onmousedown=\"startDrag(event,"+id+",&quot;move&quot;)\">"+
-                                                                                                                                "<div class=\"resize-handle left\" onmousedown=\"startDrag(event,"+id+",&quot;left&quot;);event.stopPropagation()\"></div>"+
-                                                                                                                                    esc(task.name)+
-                                                                                                                                        "<div class=\"resize-handle right\" onmousedown=\"startDrag(event,"+id+",&quot;right&quot;);event.stopPropagation()\"></div>"+
-                                                                                                                                            "</div></div></div>";
-                                                                                                                                            }
-                                                                                                                                            function render(){
-                                                                                                                                              var g=document.getElementById("gantt");
-                                                                                                                                                var h="<div class=\"header-row\"><div class=\"h-task\">Task</div><div class=\"h-owner\">Owner</div>"+
-                                                                                                                                                    DAYS.map(function(d){return "<div class=\"h-day\"><div class=\"day-name\">"+d.name+"</div><div class=\"day-date\">"+d.date+"</div></div>";}).join("")+"</div>";
-                                                                                                                                                      tasks.forEach(function(task){
-                                                                                                                                                                  h+=buildRow(task);
-                                                                                                                                                                    });
-                                                                                                                                                                      h+="<div class=\"add-row\"><button class=\"add-row-btn\" onclick=\"addTask()\" title=\"Add row\">+</button><div class=\"add-row-line\"></div></div>";
-                                                                                                                                                                        h+="<div class=\"signoff-row\"><div class=\"so-icon\">&#128640;</div><div><div class=\"so-title\">Management Sign-Off &mdash; Proceed to Detail Design</div><div class=\"so-sub\">All open items closed &middot; STR &#10003; &middot; Penthouse &#10003; &middot; ID Update &#10003; &middot; BIM &#10003;</div></div><div class=\"so-date\">~5 Apr 2026</div></div>";
-                                                                                                                                                                          g.innerHTML=h;
-                                                                                                                                                                          }
-                                                                                                                                                                          var rowDragState=null;
-function startRowDrag(e,taskId){
-  e.preventDefault();e.stopPropagation();
-  var row=document.querySelector('.g-row[data-id="'+taskId+'"]');
-  if(!row)return;
-  row.classList.add('dragging-row');
-  rowDragState={taskId:taskId,row:row};
-  document.addEventListener('mousemove',onRowDrag);
-  document.addEventListener('mouseup',onRowDrop);
-}
-function onRowDrag(e){
-  if(!rowDragState)return;
-  document.querySelectorAll('.g-row').forEach(function(r){r.classList.remove('drag-over-top','drag-over-bottom');});
-  var rows=Array.from(document.querySelectorAll('.g-row:not(.dragging-row)'));
-  for(var i=0;i<rows.length;i++){
-    var rect=rows[i].getBoundingClientRect();
-    var mid=rect.top+rect.height/2;
-    if(e.clientY<mid){rows[i].classList.add('drag-over-top');break;}
-    else if(i===rows.length-1){rows[i].classList.add('drag-over-bottom');}
-  }
-}
-function onRowDrop(e){
-  if(!rowDragState)return;
-  document.removeEventListener('mousemove',onRowDrag);
-  document.removeEventListener('mouseup',onRowDrop);
-  var draggedId=rowDragState.taskId;
-  rowDragState.row.classList.remove('dragging-row');
-  var overTop=document.querySelector('.g-row.drag-over-top');
-  var overBottom=document.querySelector('.g-row.drag-over-bottom');
-  document.querySelectorAll('.g-row').forEach(function(r){r.classList.remove('drag-over-top','drag-over-bottom');});
-  var targetRow=overTop||overBottom;
-  if(targetRow){
-    var targetId=parseInt(targetRow.getAttribute('data-id'));
-    var fromIdx=tasks.findIndex(function(t){return t.id===draggedId;});
-    var toIdx=tasks.findIndex(function(t){return t.id===targetId;});
-    if(fromIdx!==-1&&toIdx!==-1&&fromIdx!==toIdx){
-      var item=tasks.splice(fromIdx,1)[0];
-      var newTo=tasks.findIndex(function(t){return t.id===targetId;});
-      if(overBottom)newTo=newTo+1;
-      tasks.splice(newTo,0,item);
-      saveTasks();render();
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SW 11 SD Approval Roadmap</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4fef9; color: #2d3748; padding: 24px; min-width: 860px; }
+    .header { background: #0f1e35; border-radius: 10px; padding: 14px 28px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; position: relative; min-height: 72px; }
+    .header-logo { height: 46px; width: 46px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
+    .header-center { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
+    .header h1 { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.4px; }
+    .header p { font-size: 12px; color: #90a8c3; margin-top: 5px; }
+    .download-pdf-btn { background: #e53e3e; color: #fff; border: none; border-radius: 6px; padding: 9px 18px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; box-shadow: 0 2px 6px rgba(229,62,62,0.4); }
+    .download-pdf-btn:hover { background: #c53030; box-shadow: 0 3px 10px rgba(229,62,62,0.5); }
+    .download-pdf-btn svg { width: 14px; height: 14px; fill: currentColor; }
+    .goal-banner { background: linear-gradient(135deg, #1a365d, #2b6cb0); border-radius: 8px; padding: 12px 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .goal-banner .g-icon { font-size: 18px; }
+    .goal-banner .g-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bee3f8; }
+    .goal-banner .g-title { font-size: 13px; font-weight: 700; color: #fff; margin-top: 2px; }
+    .gantt-wrap { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); min-height: 320px; overflow: hidden; }
+    .g-row { display: flex; align-items: stretch; border-bottom: 1px solid #f0f4f8; min-height: 32px; position: relative; }
+    .task-cell { width: 220px; min-width: 220px; padding: 6px 10px; display: flex; align-items: flex-start; gap: 6px; border-right: 1px solid #e8f0f7; position: relative; }
+    .task-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; cursor: pointer; }
+    .task-dot:hover { transform: scale(1.4); }
+    .task-text { flex: 1; min-width: 0; }
+    .task-name { font-size: 11px; font-weight: 600; color: #2d3748; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; outline: none; display: block; }
+    .task-name:focus { white-space: normal; overflow: visible; background: #f0f9ff; border-radius: 3px; padding: 1px 3px; }
+    .task-sub { font-size: 9px; color: #718096; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; outline: none; display: block; }
+    .task-sub:focus { white-space: normal; overflow: visible; background: #f0f9ff; border-radius: 3px; }
+    .delete-btn { opacity: 0; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: #fed7d7; border: none; border-radius: 3px; color: #c53030; font-size: 9px; padding: 2px 5px; cursor: pointer; transition: opacity .15s; }
+    .task-cell:hover .delete-btn { opacity: 1; }
+    .owner-cell { width: 80px; min-width: 80px; padding: 6px 8px; font-size: 9.5px; color: #4a5568; display: flex; align-items: center; border-right: 1px solid #e8f0f7; cursor: text; outline: none; }
+    .owner-cell:focus { background: #f0f9ff; }
+    .timeline-cell { flex: 1; position: relative; min-height: 32px; }
+    .grid-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #f0f4f8; pointer-events: none; }
+    .g-bar { position: absolute; top: 50%; transform: translateY(-50%); height: 20px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 9.5px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: grab; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: box-shadow .1s; }
+    .g-bar:active { cursor: grabbing; box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
+    .resize-handle { position: absolute; top: 0; bottom: 0; width: 6px; cursor: ew-resize; }
+    .resize-handle.left { left: 0; }
+    .resize-handle.right { right: 0; }
+    .header-row { display: flex; background: #1a365d; border-radius: 10px 10px 0 0; color: #fff; font-size: 10px; font-weight: 700; min-height: 36px; }
+    .h-task { width: 220px; min-width: 220px; padding: 8px 10px; border-right: 1px solid #2a4a7f; display: flex; align-items: center; }
+    .h-owner { width: 80px; min-width: 80px; padding: 8px 8px; border-right: 1px solid #2a4a7f; display: flex; align-items: center; }
+    .h-day { flex: 1; padding: 4px 6px; text-align: center; border-right: 1px solid #2a4a7f; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .h-day:last-child { border-right: none; }
+    .h-day .day-name { font-size: 10px; font-weight: 700; }
+    .h-day .day-date { font-size: 8.5px; opacity: .7; margin-top: 1px; }
+    .section-row { background: #edf2f7; font-size: 9.5px; font-weight: 700; color: #4a5568; text-transform: uppercase; letter-spacing: .6px; padding: 5px 10px; border-bottom: 1px solid #e2e8f0; }
+    .add-row { padding: 4px 0 4px 4px; display: flex; align-items: center; border-top: 1px solid #e8f0f7; position: relative; }
+    .add-row-btn { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #4a90d9; background: #fff; color: #4a90d9; font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); flex-shrink: 0; }
+    .add-row-btn:hover { background: #4a90d9; color: #fff; box-shadow: 0 2px 6px rgba(74,144,217,0.4); }
+    .add-row-line { flex: 1; height: 2px; background: #4a90d9; opacity: 0; transition: opacity .15s; margin-left: 2px; }
+    .add-row:hover .add-row-line { opacity: 0.3; }
+    .signoff-row { background: #1a365d; color: #fff; display: flex; align-items: center; padding: 10px 14px; border-radius: 0 0 10px 10px; }
+    .so-icon { font-size: 18px; margin-right: 10px; }
+    .so-title { font-size: 12px; font-weight: 700; }
+    .so-sub { font-size: 9px; color: #90cdf4; margin-top: 2px; }
+    .so-date { margin-left: auto; font-size: 11px; font-weight: 700; color: #68d391; }
+    .hint-bar { margin-top: 8px; font-size: 9px; color: #a0aec0; text-align: center; }
+    .hint-bar span { margin: 0 6px; }
+    .save-indicator { position: fixed; bottom: 16px; right: 16px; background: #38a169; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .save-indicator.show { opacity: 1; }
+    @media print { .download-pdf-btn { display: none !important; } body { padding: 0; background: #fff; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img class="header-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjEyIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iMTUiIHk9Ijc1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmYiPkQ8L3RleHQ+PHRleHQgeD0iNTIiIHk9IjQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmYiPlQ8L3RleHQ+PC9zdmc+" alt="DT Logo" />
+    <div class="header-center">
+      <h1>SW 11 SD Approval Roadmap</h1>
+      <p>1-Week Action Plan &middot; 30 March &ndash; 5 April 2026</p>
+    </div>
+    <button class="download-pdf-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/></svg>
+      Download PDF
+    </button>
+  </div>
+  <div class="goal-banner">
+    <div class="g-icon">&#127919;</div>
+    <div>
+      <div class="g-label">Ultimate Goal</div>
+      <div class="g-title">Close all open items &amp; obtain management sign-off to proceed to Detail Design (DD)</div>
+    </div>
+  </div>
+  <div class="gantt-wrap" id="gantt"></div>
+  <div class="hint-bar">
+    &#128161; <span><b>Click</b> task name or owner to edit</span> &middot;
+    <span><b>Drag</b> bar to move</span> &middot;
+    <span><b>Drag edges</b> to resize</span> &middot;
+    <span>&#x25cf; dot to change colour</span> &middot;
+    <span><b>&#43;</b> button below table to add row</span>
+  </div>
+  <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
+  <script>
+    var DAYS=[
+      {name:"Mon",date:"30 Mar"},
+      {name:"Tue",date:"31 Mar"},
+      {name:"Wed",date:"1 Apr"},
+      {name:"Thu",date:"2 Apr"},
+      {name:"Fri",date:"3 Apr"},
+      {name:"Sat",date:"4 Apr"},
+      {name:"Sun",date:"5 Apr"},
+      {name:"Mon",date:"6 Apr"},
+      {name:"Tue",date:"7 Apr"},
+      {name:"Wed",date:"8 Apr"},
+      {name:"Thu",date:"9 Apr"},
+      {name:"Fri",date:"10 Apr"}
+    ];
+    var COLORS=["#e53e3e","#dd6b20","#d69e2e","#38a169","#319795","#3182ce","#6b46c1","#1a365d"];
+    var DEFAULT_TASKS=[
+      {id:1,name:"Penthouse Layout Solution - ID",sub:"Investigate replication across both towers",owner:"Yara / Jack",start:0,end:1,color:"#e53e3e"},
+      {id:2,name:"Update & Issue ARCH PH Layo...",sub:"Issue for confirmation Yara / Chris / Emaar",owner:"Yara",start:1,end:2,color:"#e53e3e"},
+      {id:3,name:"CIR to update ID for PH",sub:"",owner:"CIR",start:2,end:3,color:"#d69e2e"},
+      {id:4,name:"Review Lauren's ID Comments...",sub:"",owner:"Yara/Piyush",start:2,end:3,color:"#e53e3e"},
+      {id:5,name:"Email Response plan to Emaar...",sub:"Conf penthouse solution in writing",owner:"Jack",start:2,end:3,color:"#e53e3e"},
+      {id:6,name:"ID SD Resubmission",sub:"Update PH timeline deliverables and include",owner:"ID Team",start:2,end:5,color:"#319795"},
+      {id:7,name:"CIR to update ID for PD",sub:"update incon layouts",owner:"CIR",start:7,end:11,color:"#d69e2e"},
+      {id:8,name:"STR — Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:2,color:"#3182ce"},
+      {id:9,name:"BIM — Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:2,color:"#319795"},
+      {id:10,name:"STR Resubmission — confirmed...",sub:"Get info for CIR sign-off",owner:"Jack",start:2,end:8,color:"#3182ce"},
+      {id:11,name:"BIM Status — Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
+      {id:12,name:"Consolidated Client Summary",sub:"All items closed — updated for Emaar in",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"},
+      {id:13,name:"Client Approval",sub:"Obtain sign-off",owner:"Owner",start:4,end:5,color:"#6b46c1"},
+      {id:14,name:"Arch FM Comments Close / A...",sub:"Description",owner:"ARCH",start:2,end:8,color:"#38a169"},
+      {id:15,name:"ARCH PD BIM UPDATE [1-area...",sub:"update +BIM changes, 3-previous PD comments, 5-clinic, 4- CIR ID updates",owner:"ARCH",start:0,end:5,color:"#38a169"},
+      {id:16,name:"Issue ARCH layouts to AOR fo...",sub:"Underlaying the ACR from BIM",owner:"ARCH",start:9,end:11,color:"#3182ce"},
+      {id:17,name:"AOR Revised PD to Emaar",sub:"Chris option",owner:"Zutari",start:9,end:12,color:"#3182ce"},
+      {id:18,name:"Zutari EW Package update?",sub:"Description",owner:"Zutari",start:0,end:4,color:"#dd6b20"},
+      {id:19,name:"Wind Tunnel update?",sub:"Description",owner:"Zutari",start:0,end:4,color:"#dd6b20"},
+      {id:20,name:"ID ACC comments analysis",sub:"Description",owner:"Yara",start:0,end:4,color:"#319795"},
+      {id:21,name:"Issue updated PH layouts to O...",sub:"Chris option",owner:"WTA",start:2,end:3,color:"#d69e2e"},
+      {id:22,name:"Issue ID comments response t...",sub:"Sent by Jack",owner:"Jack",start:2,end:3,color:"#e53e3e"},
+      {id:23,name:"Respond to Emaar w PH upda...",sub:"to Chris copy to Emaar ID",owner:"Muna",start:2,end:3,color:"#38a169"},
+      {id:24,name:"VT confirmation of solution",sub:"Description",owner:"Muna",start:2,end:3,color:"#38a169"},
+      {id:25,name:"Provide Clinic Updated to Ema...",sub:"Chris option",owner:"KpW",start:4,end:5,color:"#3182ce"}
+    ];
+    var SECTIONS=[
+      {beforeId:1,label:"Day 1 — Immediate Actions (30 Mar)"},
+      {beforeId:8,label:"Day 1–2 — Follow-Ups in Progress"},
+      {beforeId:12,label:"Day 2–3 — Awaiting Approvals"},
+      {beforeId:15,label:"Day 3–5 — Updates & Confirmation"},
+      {beforeId:18,label:"Day 5–7 — Client Summary & Sign-Off"}
+    ];
+    var STORAGE_KEY="sw11_gantt_tasks";
+    function saveTasks(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));showSaved();}catch(e){}}
+    function loadTasks(){try{var s=localStorage.getItem(STORAGE_KEY);if(s){var p=JSON.parse(s);if(Array.isArray(p)&&p.length>0)return p;}}catch(e){}return DEFAULT_TASKS.map(function(t){return Object.assign({},t);});}
+    var _st;
+    function showSaved(){var el=document.getElementById("saveIndicator");el.classList.add("show");clearTimeout(_st);_st=setTimeout(function(){el.classList.remove("show");},1500);}
+    var tasks=loadTasks();
+    var nextId=tasks.reduce(function(m,t){return Math.max(m,t.id);},0)+1;
+    function pct(n){return(n/DAYS.length*100).toFixed(4)+"%";}
+    function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+    function barStyle(t){return "left:"+pct(t.start)+";width:"+pct(Math.max(t.end-t.start,0.15))+";background:"+t.color+";";}
+    function buildRow(task){
+      var id=task.id;
+      var gl=DAYS.map(function(_,i){return "<div class=\"grid-line\" style=\"left:"+pct(i)+"\"></div>";}).join("");
+      return "<div class=\"g-row\" data-id=\""+id+"\">"+
+        "<div class=\"task-cell\">"+
+        "<div class=\"task-dot\" style=\"background:"+task.color+"\" title=\"Click to change colour\" onclick=\"cycleColor("+id+")\"></div>"+
+        "<div class=\"task-text\">"+
+        "<span class=\"task-name\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;name&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.name)+"</span>"+
+        "<span class=\"task-sub\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;sub&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.sub)+"</span>"+
+        "</div>"+
+        "<button class=\"delete-btn\" onclick=\"deleteTask("+id+")\" title=\"Delete row\">&#10005;</button>"+
+        "</div>"+
+        "<div class=\"owner-cell\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;owner&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.owner)+"</div>"+
+        "<div class=\"timeline-cell\" id=\"tl"+id+"\">"+gl+
+        "<div class=\"g-bar\" id=\"bar"+id+"\" style=\""+barStyle(task)+"\" onmousedown=\"startDrag(event,"+id+",&quot;move&quot;)\">"+
+        "<div class=\"resize-handle left\" onmousedown=\"startDrag(event,"+id+",&quot;left&quot;);event.stopPropagation()\"></div>"+
+        esc(task.name)+
+        "<div class=\"resize-handle right\" onmousedown=\"startDrag(event,"+id+",&quot;right&quot;);event.stopPropagation()\"></div>"+
+        "</div></div></div>";
     }
-  }
-  rowDragState=null;
-}
-var dragState=null;
-                                                                                                                                                                          function startDrag(e,taskId,type){
-                                                                                                                                                                            e.preventDefault();
-                                                                                                                                                                              var tl=document.getElementById("tl"+taskId);
-                                                                                                                                                                                var rect=tl.getBoundingClientRect();
-                                                                                                                                                                                  var dayW=rect.width/DAYS.length;
-                                                                                                                                                                                    var task=tasks.filter(function(t){return t.id===taskId;})[0];
-                                                                                                                                                                                      dragState={taskId:taskId,type:type,startX:e.clientX,origStart:task.start,origEnd:task.end,dayW:dayW,pendingStart:task.start,pendingEnd:task.end};
-                                                                                                                                                                                        document.addEventListener("mousemove",onDrag);
-                                                                                                                                                                                          document.addEventListener("mouseup",onDrop);
-                                                                                                                                                                                          }
-                                                                                                                                                                                          function onDrag(e){
-                                                                                                                                                                                            if(!dragState)return;
-                                                                                                                                                                                              var taskId=dragState.taskId,type=dragState.type,startX=dragState.startX,origStart=dragState.origStart,origEnd=dragState.origEnd,dayW=dragState.dayW;
-                                                                                                                                                                                                var barEl=document.getElementById("bar"+taskId);
-                                                                                                                                                                                                  var snap=Math.round((e.clientX-startX)/dayW);
-                                                                                                                                                                                                    var ns=origStart,ne=origEnd;
-                                                                                                                                                                                                      if(type==="move"){ns=Math.max(0,Math.min(origStart+snap,DAYS.length-1));ne=ns+(origEnd-origStart);if(ne>DAYS.length){ne=DAYS.length;ns=ne-(origEnd-origStart);}}
-                                                                                                                                                                                                        else if(type==="left"){ns=Math.max(0,Math.min(origStart+snap,origEnd));}
-                                                                                                                                                                                                          else if(type==="right"){ne=Math.max(origStart,Math.min(origEnd+snap,DAYS.length));}
-                                                                                                                                                                                                            dragState.pendingStart=ns;dragState.pendingEnd=ne;
-                                                                                                                                                                                                              barEl.style.left=pct(ns);barEl.style.width=pct(Math.max(ne-ns,0.15));
-                                                                                                                                                                                                              }
-                                                                                                                                                                                                              function onDrop(){
-                                                                                                                                                                                                                if(!dragState)return;
-                                                                                                                                                                                                                  var taskId=dragState.taskId,ps=dragState.pendingStart,pe=dragState.pendingEnd;
-                                                                                                                                                                                                                    var task=tasks.filter(function(t){return t.id===taskId;})[0];
-                                                                                                                                                                                                                      if(task){task.start=ps;task.end=pe;saveTasks();}
-                                                                                                                                                                                                                        dragState=null;
-                                                                                                                                                                                                                          document.removeEventListener("mousemove",onDrag);
-                                                                                                                                                                                                                            document.removeEventListener("mouseup",onDrop);
-                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                            function deleteTask(id){tasks=tasks.filter(function(t){return t.id!==id;});saveTasks();render();}
-                                                                                                                                                                                                                            function addTask(){
-                                                                                                                                                                                                                              tasks.push({id:nextId++,name:"New Task",sub:"Description",owner:"Owner",start:0,end:1,color:COLORS[0]});
-                                                                                                                                                                                                                                saveTasks();render();
-                                                                                                                                                                                                                                  var r=document.querySelector("[data-id=\""+(nextId-1)+"\"] .task-name");
-                                                                                                                                                                                                                                    if(r){r.focus();document.execCommand("selectAll",false,null);}
-                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                    function cycleColor(id){
-                                                                                                                                                                                                                                      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
-                                                                                                                                                                                                                                        var idx=COLORS.indexOf(task.color);
-                                                                                                                                                                                                                                          task.color=COLORS[(idx+1)%COLORS.length];
-                                                                                                                                                                                                                                            var dot=document.querySelector("[data-id=\""+id+"\"] .task-dot");
-                                                                                                                                                                                                                                              var bar=document.getElementById("bar"+id);
-                                                                                                                                                                                                                                                if(dot)dot.style.background=task.color;
-                                                                                                                                                                                                                                                  if(bar)bar.style.background=task.color;
-                                                                                                                                                                                                                                                    saveTasks();
-                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                    function saveField(id,field,value){
-                                                                                                                                                                                                                                                      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
-                                                                                                                                                                                                                                                        task[field]=value.trim();
-                                                                                                                                                                                                                                                          if(field==="name"){var bar=document.getElementById("bar"+id);if(bar){var nodes=bar.childNodes;for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType===3){nodes[i].textContent=task.name;break;}}}}
-                                                                                                                                                                                                                                                            saveTasks();
-                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                            function blurOnEnter(e){if(e.key==="Enter"){e.preventDefault();e.target.blur();}}
-                                                                                                                                                                                                                                                            render();
-                                                                                                                                                                                                                                                            </script>
-                                                                                                                                                                                                                                                            </body>
-                                                                                                                                                                                                                                                            </html>>
+    function render(){
+      var g=document.getElementById("gantt");
+      var h="<div class=\"header-row\"><div class=\"h-task\">Task</div><div class=\"h-owner\">Owner</div>"+
+        DAYS.map(function(d){return "<div class=\"h-day\"><div class=\"day-name\">"+d.name+"</div><div class=\"day-date\">"+d.date+"</div></div>";}).join("")+"</div>";
+      tasks.forEach(function(task){
+        var sec=SECTIONS.filter(function(s){return s.beforeId===task.id;})[0];
+        if(sec)h+="<div class=\"section-row\">"+esc(sec.label)+"</div>";
+        h+=buildRow(task);
+      });
+      h+="<div class=\"add-row\"><button class=\"add-row-btn\" onclick=\"addTask()\" title=\"Add row\">+</button><div class=\"add-row-line\"></div></div>";
+      h+="<div class=\"signoff-row\"><div class=\"so-icon\">&#128640;</div><div><div class=\"so-title\">Management Sign-Off &mdash; Proceed to Detail Design</div><div class=\"so-sub\">All open items closed &middot; STR &#10003; &middot; Penthouse &#10003; &middot; ID Update &#10003; &middot; BIM &#10003;</div></div><div class=\"so-date\">~5 Apr 2026</div></div>";
+      g.innerHTML=h;
+    }
+    var dragState=null;
+    function startDrag(e,taskId,type){
+      e.preventDefault();
+      var tl=document.getElementById("tl"+taskId);
+      var rect=tl.getBoundingClientRect();
+      var dayW=rect.width/DAYS.length;
+      var task=tasks.filter(function(t){return t.id===taskId;})[0];
+      dragState={taskId:taskId,type:type,startX:e.clientX,origStart:task.start,origEnd:task.end,dayW:dayW,pendingStart:task.start,pendingEnd:task.end};
+      document.addEventListener("mousemove",onDrag);
+      document.addEventListener("mouseup",onDrop);
+    }
+    function onDrag(e){
+      if(!dragState)return;
+      var taskId=dragState.taskId,type=dragState.type,startX=dragState.startX,origStart=dragState.origStart,origEnd=dragState.origEnd,dayW=dragState.dayW;
+      var barEl=document.getElementById("bar"+taskId);
+      var snap=Math.round((e.clientX-startX)/dayW);
+      var ns=origStart,ne=origEnd;
+      if(type==="move"){ns=Math.max(0,Math.min(origStart+snap,DAYS.length-1));ne=ns+(origEnd-origStart);if(ne>DAYS.length){ne=DAYS.length;ns=ne-(origEnd-origStart);}}
+      else if(type==="left"){ns=Math.max(0,Math.min(origStart+snap,origEnd));}
+      else if(type==="right"){ne=Math.max(origStart,Math.min(origEnd+snap,DAYS.length));}
+      dragState.pendingStart=ns;dragState.pendingEnd=ne;
+      barEl.style.left=pct(ns);barEl.style.width=pct(Math.max(ne-ns,0.15));
+    }
+    function onDrop(){
+      if(!dragState)return;
+      var taskId=dragState.taskId,ps=dragState.pendingStart,pe=dragState.pendingEnd;
+      var task=tasks.filter(function(t){return t.id===taskId;})[0];
+      if(task){task.start=ps;task.end=pe;saveTasks();}
+      dragState=null;
+      document.removeEventListener("mousemove",onDrag);
+      document.removeEventListener("mouseup",onDrop);
+    }
+    function deleteTask(id){tasks=tasks.filter(function(t){return t.id!==id;});saveTasks();render();}
+    function addTask(){
+      tasks.push({id:nextId++,name:"New Task",sub:"Description",owner:"Owner",start:0,end:1,color:COLORS[0]});
+      saveTasks();render();
+      var r=document.querySelector("[data-id=\""+(nextId-1)+"\" ] .task-name");
+      if(r){r.focus();document.execCommand("selectAll",false,null);}
+    }
+    function cycleColor(id){
+      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
+      var idx=COLORS.indexOf(task.color);
+      task.color=COLORS[(idx+1)%COLORS.length];
+      var dot=document.querySelector("[data-id=\""+id+"\"] .task-dot");
+      var bar=document.getElementById("bar"+id);
+      if(dot)dot.style.background=task.color;
+      if(bar)bar.style.background=task.color;
+      saveTasks();
+    }
+    function saveField(id,field,value){
+      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
+      task[field]=value.trim();
+      if(field==="name"){var bar=document.getElementById("bar"+id);if(bar){var nodes=bar.childNodes;for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType===3){nodes[i].textContent=task.name;break;}}}}
+      saveTasks();
+    }
+    function blurOnEnter(e){if(e.key==="Enter"){e.preventDefault();e.target.blur();}}
+    render();
+  </script>
+</body>
+</html>
