@@ -13,15 +13,21 @@
     .header h1 { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.4px; }
     .header p { font-size: 12px; color: #90a8c3; margin-top: 5px; }
     .download-pdf-btn { background: #e53e3e; color: #fff; border: none; border-radius: 6px; padding: 9px 18px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; white-space: nowrap; flex-shrink: 0; transition: background 0.2s; box-shadow: 0 2px 6px rgba(229,62,62,0.4); }
-    .download-pdf-btn:hover { background: #c53030; box-shadow: 0 3px 10px rgba(229,62,62,0.5); }
+    .download-pdf-btn:hover { background: #c53030; }
     .download-pdf-btn svg { width: 14px; height: 14px; fill: currentColor; }
     .goal-banner { background: linear-gradient(135deg, #1a365d, #2b6cb0); border-radius: 8px; padding: 12px 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
     .goal-banner .g-icon { font-size: 18px; }
     .goal-banner .g-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #bee3f8; }
     .goal-banner .g-title { font-size: 13px; font-weight: 700; color: #fff; margin-top: 2px; }
     .gantt-wrap { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); min-height: 320px; overflow: hidden; }
-    .g-row { display: flex; align-items: stretch; border-bottom: 1px solid #f0f4f8; min-height: 32px; position: relative; }
-    .task-cell { width: 220px; min-width: 220px; padding: 6px 10px; display: flex; align-items: flex-start; gap: 6px; border-right: 1px solid #e8f0f7; position: relative; }
+    .g-row { display: flex; align-items: stretch; border-bottom: 1px solid #f0f4f8; min-height: 32px; position: relative; transition: background 0.1s; }
+    .g-row.dragging-row { opacity: 0.45; background: #ebf8ff; }
+    .g-row.drag-over-top { box-shadow: inset 0 3px 0 #3182ce; }
+    .g-row.drag-over-bottom { box-shadow: inset 0 -3px 0 #3182ce; }
+    .row-drag-handle { cursor: ns-resize; padding: 0 5px 0 4px; opacity: 0; font-size: 13px; user-select: none; display: flex; align-items: center; flex-shrink: 0; color: #a0aec0; transition: opacity 0.15s; }
+    .g-row:hover .row-drag-handle { opacity: 1; }
+    .row-drag-handle:hover { color: #3182ce; }
+    .task-cell { width: 220px; min-width: 220px; padding: 6px 6px 6px 0; display: flex; align-items: flex-start; gap: 5px; border-right: 1px solid #e8f0f7; position: relative; }
     .task-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; cursor: pointer; }
     .task-dot:hover { transform: scale(1.4); }
     .task-text { flex: 1; min-width: 0; }
@@ -47,7 +53,6 @@
     .h-day:last-child { border-right: none; }
     .h-day .day-name { font-size: 10px; font-weight: 700; }
     .h-day .day-date { font-size: 8.5px; opacity: .7; margin-top: 1px; }
-    .section-row { background: #edf2f7; font-size: 9.5px; font-weight: 700; color: #4a5568; text-transform: uppercase; letter-spacing: .6px; padding: 5px 10px; border-bottom: 1px solid #e2e8f0; }
     .add-row { padding: 4px 0 4px 4px; display: flex; align-items: center; border-top: 1px solid #e8f0f7; position: relative; }
     .add-row-btn { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #4a90d9; background: #fff; color: #4a90d9; font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); flex-shrink: 0; }
     .add-row-btn:hover { background: #4a90d9; color: #fff; box-shadow: 0 2px 6px rgba(74,144,217,0.4); }
@@ -87,10 +92,11 @@
   <div class="gantt-wrap" id="gantt"></div>
   <div class="hint-bar">
     &#128161; <span><b>Click</b> task name or owner to edit</span> &middot;
+    <span><b>Drag &#8597;</b> handle to reorder rows</span> &middot;
     <span><b>Drag</b> bar to move</span> &middot;
     <span><b>Drag edges</b> to resize</span> &middot;
     <span>&#x25cf; dot to change colour</span> &middot;
-    <span><b>&#43;</b> button below table to add row</span>
+    <span><b>&#43;</b> button to add row</span>
   </div>
   <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
   <script>
@@ -111,37 +117,30 @@
     var COLORS=["#e53e3e","#dd6b20","#d69e2e","#38a169","#319795","#3182ce","#6b46c1","#1a365d"];
     var DEFAULT_TASKS=[
       {id:1,name:"Penthouse Layout Solution - ID",sub:"Investigate replication across both towers",owner:"Yara / Jack",start:0,end:1,color:"#e53e3e"},
-      {id:2,name:"Update & Issue ARCH PH Layo...",sub:"Issue for confirmation Yara / Chris / Emaar",owner:"Yara",start:1,end:2,color:"#e53e3e"},
+      {id:2,name:"Update & Issue ARCH PH Layout",sub:"Issue for confirmation Yara / Chris / Emaar",owner:"Yara",start:1,end:2,color:"#e53e3e"},
       {id:3,name:"CIR to update ID for PH",sub:"",owner:"CIR",start:2,end:3,color:"#d69e2e"},
-      {id:4,name:"Review Lauren's ID Comments...",sub:"",owner:"Yara/Piyush",start:2,end:3,color:"#e53e3e"},
-      {id:5,name:"Email Response plan to Emaar...",sub:"Conf penthouse solution in writing",owner:"Jack",start:2,end:3,color:"#e53e3e"},
+      {id:4,name:"Review Lauren's ID Comments",sub:"Inform Emaar ID for feedback",owner:"Yara/Piyush",start:2,end:3,color:"#e53e3e"},
+      {id:5,name:"Email Response plan to Emaar ID",sub:"Conf penthouse solution in writing",owner:"Jack",start:2,end:3,color:"#e53e3e"},
       {id:6,name:"ID SD Resubmission",sub:"Update PH timeline deliverables and include",owner:"ID Team",start:2,end:5,color:"#319795"},
       {id:7,name:"CIR to update ID for PD",sub:"update incon layouts",owner:"CIR",start:7,end:11,color:"#d69e2e"},
       {id:8,name:"STR — Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:2,color:"#3182ce"},
       {id:9,name:"BIM — Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:2,color:"#319795"},
-      {id:10,name:"STR Resubmission — confirmed...",sub:"Get info for CIR sign-off",owner:"Jack",start:2,end:8,color:"#3182ce"},
+      {id:10,name:"STR Resubmission — confirmed by Monday",sub:"Get info for CIR sign-off",owner:"Jack",start:2,end:8,color:"#3182ce"},
       {id:11,name:"BIM Status — Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
-      {id:12,name:"Consolidated Client Summary",sub:"All items closed — updated for Emaar in",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"},
+      {id:12,name:"Consolidated Client Summary",sub:"All items closed — updated for Emaar mgmt",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"},
       {id:13,name:"Client Approval",sub:"Obtain sign-off",owner:"Owner",start:4,end:5,color:"#6b46c1"},
-      {id:14,name:"Arch FM Comments Close / A...",sub:"Description",owner:"ARCH",start:2,end:8,color:"#38a169"},
-      {id:15,name:"ARCH PD BIM UPDATE [1-area...",sub:"update +BIM changes, 3-previous PD comments, 5-clinic, 4- CIR ID updates",owner:"ARCH",start:0,end:5,color:"#38a169"},
-      {id:16,name:"Issue ARCH layouts to AOR fo...",sub:"Underlaying the ACR from BIM",owner:"ARCH",start:9,end:11,color:"#3182ce"},
+      {id:14,name:"Arch FM Comments Close",sub:"Description",owner:"ARCH",start:2,end:8,color:"#38a169"},
+      {id:15,name:"ARCH PD BIM UPDATE",sub:"area changes, previous PD comments, clinic, CIR ID updates",owner:"ARCH",start:0,end:5,color:"#38a169"},
+      {id:16,name:"Issue ARCH layouts to AOR",sub:"Underlaying the ACR from BIM",owner:"ARCH",start:9,end:11,color:"#3182ce"},
       {id:17,name:"AOR Revised PD to Emaar",sub:"Chris option",owner:"Zutari",start:9,end:12,color:"#3182ce"},
       {id:18,name:"Zutari EW Package update?",sub:"Description",owner:"Zutari",start:0,end:4,color:"#dd6b20"},
       {id:19,name:"Wind Tunnel update?",sub:"Description",owner:"Zutari",start:0,end:4,color:"#dd6b20"},
       {id:20,name:"ID ACC comments analysis",sub:"Description",owner:"Yara",start:0,end:4,color:"#319795"},
-      {id:21,name:"Issue updated PH layouts to O...",sub:"Chris option",owner:"WTA",start:2,end:3,color:"#d69e2e"},
-      {id:22,name:"Issue ID comments response t...",sub:"Sent by Jack",owner:"Jack",start:2,end:3,color:"#e53e3e"},
-      {id:23,name:"Respond to Emaar w PH upda...",sub:"to Chris copy to Emaar ID",owner:"Muna",start:2,end:3,color:"#38a169"},
+      {id:21,name:"Issue updated PH layouts to OIR",sub:"Chris option",owner:"WTA",start:2,end:3,color:"#d69e2e"},
+      {id:22,name:"Issue ID comments response to Emaar",sub:"Sent by Jack",owner:"Jack",start:2,end:3,color:"#e53e3e"},
+      {id:23,name:"Respond to Emaar w PH updated layout",sub:"to Chris copy to Emaar ID",owner:"Muna",start:2,end:3,color:"#38a169"},
       {id:24,name:"VT confirmation of solution",sub:"Description",owner:"Muna",start:2,end:3,color:"#38a169"},
-      {id:25,name:"Provide Clinic Updated to Ema...",sub:"Chris option",owner:"KpW",start:4,end:5,color:"#3182ce"}
-    ];
-    var SECTIONS=[
-      {beforeId:1,label:"Day 1 — Immediate Actions (30 Mar)"},
-      {beforeId:8,label:"Day 1–2 — Follow-Ups in Progress"},
-      {beforeId:12,label:"Day 2–3 — Awaiting Approvals"},
-      {beforeId:15,label:"Day 3–5 — Updates & Confirmation"},
-      {beforeId:18,label:"Day 5–7 — Client Summary & Sign-Off"}
+      {id:25,name:"Provide Clinic Updated to Emaar",sub:"Chris option",owner:"KpW",start:4,end:5,color:"#3182ce"}
     ];
     var STORAGE_KEY="sw11_gantt_tasks";
     function saveTasks(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));showSaved();}catch(e){}}
@@ -158,6 +157,7 @@
       var gl=DAYS.map(function(_,i){return "<div class=\"grid-line\" style=\"left:"+pct(i)+"\"></div>";}).join("");
       return "<div class=\"g-row\" data-id=\""+id+"\">"+
         "<div class=\"task-cell\">"+
+        "<div class=\"row-drag-handle\" onmousedown=\"startRowDrag(event,"+id+")\" title=\"Drag to reorder\">&#8597;</div>"+
         "<div class=\"task-dot\" style=\"background:"+task.color+"\" title=\"Click to change colour\" onclick=\"cycleColor("+id+")\"></div>"+
         "<div class=\"task-text\">"+
         "<span class=\"task-name\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;name&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.name)+"</span>"+
@@ -167,66 +167,107 @@
         "</div>"+
         "<div class=\"owner-cell\" contenteditable=\"true\" onblur=\"saveField("+id+",&quot;owner&quot;,this.innerText)\" onkeydown=\"blurOnEnter(event)\">"+esc(task.owner)+"</div>"+
         "<div class=\"timeline-cell\" id=\"tl"+id+"\">"+gl+
-        "<div class=\"g-bar\" id=\"bar"+id+"\" style=\""+barStyle(task)+"\" onmousedown=\"startDrag(event,"+id+",&quot;move&quot;)\">"+
-        "<div class=\"resize-handle left\" onmousedown=\"startDrag(event,"+id+",&quot;left&quot;);event.stopPropagation()\"></div>"+
+        "<div class=\"g-bar\" id=\"bar"+id+"\" style=\""+barStyle(task)+"\" onmousedown=\"startBarDrag(event,"+id+",&quot;move&quot;)\">"+
+        "<div class=\"resize-handle left\" onmousedown=\"startBarDrag(event,"+id+",&quot;left&quot;);event.stopPropagation()\"></div>"+
         esc(task.name)+
-        "<div class=\"resize-handle right\" onmousedown=\"startDrag(event,"+id+",&quot;right&quot;);event.stopPropagation()\"></div>"+
+        "<div class=\"resize-handle right\" onmousedown=\"startBarDrag(event,"+id+",&quot;right&quot;);event.stopPropagation()\"></div>"+
         "</div></div></div>";
     }
     function render(){
       var g=document.getElementById("gantt");
       var h="<div class=\"header-row\"><div class=\"h-task\">Task</div><div class=\"h-owner\">Owner</div>"+
         DAYS.map(function(d){return "<div class=\"h-day\"><div class=\"day-name\">"+d.name+"</div><div class=\"day-date\">"+d.date+"</div></div>";}).join("")+"</div>";
-      tasks.forEach(function(task){
-        var sec=SECTIONS.filter(function(s){return s.beforeId===task.id;})[0];
-        if(sec)h+="<div class=\"section-row\">"+esc(sec.label)+"</div>";
-        h+=buildRow(task);
-      });
+      tasks.forEach(function(task){ h+=buildRow(task); });
       h+="<div class=\"add-row\"><button class=\"add-row-btn\" onclick=\"addTask()\" title=\"Add row\">+</button><div class=\"add-row-line\"></div></div>";
       h+="<div class=\"signoff-row\"><div class=\"so-icon\">&#128640;</div><div><div class=\"so-title\">Management Sign-Off &mdash; Proceed to Detail Design</div><div class=\"so-sub\">All open items closed &middot; STR &#10003; &middot; Penthouse &#10003; &middot; ID Update &#10003; &middot; BIM &#10003;</div></div><div class=\"so-date\">~5 Apr 2026</div></div>";
       g.innerHTML=h;
     }
-    var dragState=null;
-    function startDrag(e,taskId,type){
+    var rowDragState=null;
+    function startRowDrag(e,taskId){
+      e.preventDefault(); e.stopPropagation();
+      var row=document.querySelector('.g-row[data-id="'+taskId+'"]');
+      if(!row)return;
+      row.classList.add('dragging-row');
+      rowDragState={taskId:taskId,row:row};
+      document.addEventListener('mousemove',onRowDrag);
+      document.addEventListener('mouseup',onRowDrop);
+    }
+    function onRowDrag(e){
+      if(!rowDragState)return;
+      document.querySelectorAll('.g-row').forEach(function(r){r.classList.remove('drag-over-top','drag-over-bottom');});
+      var rows=Array.from(document.querySelectorAll('.g-row:not(.dragging-row)'));
+      for(var i=0;i<rows.length;i++){
+        var rect=rows[i].getBoundingClientRect();
+        var mid=rect.top+rect.height/2;
+        if(e.clientY<mid){rows[i].classList.add('drag-over-top');break;}
+        else if(i===rows.length-1){rows[i].classList.add('drag-over-bottom');}
+      }
+    }
+    function onRowDrop(){
+      if(!rowDragState)return;
+      document.removeEventListener('mousemove',onRowDrag);
+      document.removeEventListener('mouseup',onRowDrop);
+      var draggedId=rowDragState.taskId;
+      rowDragState.row.classList.remove('dragging-row');
+      var overTop=document.querySelector('.g-row.drag-over-top');
+      var overBottom=document.querySelector('.g-row.drag-over-bottom');
+      document.querySelectorAll('.g-row').forEach(function(r){r.classList.remove('drag-over-top','drag-over-bottom');});
+      var targetRow=overTop||overBottom;
+      if(targetRow){
+        var targetId=parseInt(targetRow.getAttribute('data-id'));
+        var fromIdx=tasks.findIndex(function(t){return t.id===draggedId;});
+        var toIdx=tasks.findIndex(function(t){return t.id===targetId;});
+        if(fromIdx!==-1&&toIdx!==-1&&fromIdx!==toIdx){
+          var item=tasks.splice(fromIdx,1)[0];
+          var newTo=tasks.findIndex(function(t){return t.id===targetId;});
+          if(overBottom)newTo=newTo+1;
+          tasks.splice(newTo,0,item);
+          saveTasks(); render();
+        }
+      }
+      rowDragState=null;
+    }
+    var barDragState=null;
+    function startBarDrag(e,taskId,type){
       e.preventDefault();
       var tl=document.getElementById("tl"+taskId);
       var rect=tl.getBoundingClientRect();
       var dayW=rect.width/DAYS.length;
       var task=tasks.filter(function(t){return t.id===taskId;})[0];
-      dragState={taskId:taskId,type:type,startX:e.clientX,origStart:task.start,origEnd:task.end,dayW:dayW,pendingStart:task.start,pendingEnd:task.end};
-      document.addEventListener("mousemove",onDrag);
-      document.addEventListener("mouseup",onDrop);
+      barDragState={taskId:taskId,type:type,startX:e.clientX,origStart:task.start,origEnd:task.end,dayW:dayW,pendingStart:task.start,pendingEnd:task.end};
+      document.addEventListener("mousemove",onBarDrag);
+      document.addEventListener("mouseup",onBarDrop);
     }
-    function onDrag(e){
-      if(!dragState)return;
-      var taskId=dragState.taskId,type=dragState.type,startX=dragState.startX,origStart=dragState.origStart,origEnd=dragState.origEnd,dayW=dragState.dayW;
+    function onBarDrag(e){
+      if(!barDragState)return;
+      var taskId=barDragState.taskId,type=barDragState.type,startX=barDragState.startX,origStart=barDragState.origStart,origEnd=barDragState.origEnd,dayW=barDragState.dayW;
       var barEl=document.getElementById("bar"+taskId);
       var snap=Math.round((e.clientX-startX)/dayW);
       var ns=origStart,ne=origEnd;
       if(type==="move"){ns=Math.max(0,Math.min(origStart+snap,DAYS.length-1));ne=ns+(origEnd-origStart);if(ne>DAYS.length){ne=DAYS.length;ns=ne-(origEnd-origStart);}}
       else if(type==="left"){ns=Math.max(0,Math.min(origStart+snap,origEnd));}
       else if(type==="right"){ne=Math.max(origStart,Math.min(origEnd+snap,DAYS.length));}
-      dragState.pendingStart=ns;dragState.pendingEnd=ne;
-      barEl.style.left=pct(ns);barEl.style.width=pct(Math.max(ne-ns,0.15));
+      barDragState.pendingStart=ns; barDragState.pendingEnd=ne;
+      barEl.style.left=pct(ns); barEl.style.width=pct(Math.max(ne-ns,0.15));
     }
-    function onDrop(){
-      if(!dragState)return;
-      var taskId=dragState.taskId,ps=dragState.pendingStart,pe=dragState.pendingEnd;
+    function onBarDrop(){
+      if(!barDragState)return;
+      var taskId=barDragState.taskId,ps=barDragState.pendingStart,pe=barDragState.pendingEnd;
       var task=tasks.filter(function(t){return t.id===taskId;})[0];
       if(task){task.start=ps;task.end=pe;saveTasks();}
-      dragState=null;
-      document.removeEventListener("mousemove",onDrag);
-      document.removeEventListener("mouseup",onDrop);
+      barDragState=null;
+      document.removeEventListener("mousemove",onBarDrag);
+      document.removeEventListener("mouseup",onBarDrop);
     }
     function deleteTask(id){tasks=tasks.filter(function(t){return t.id!==id;});saveTasks();render();}
     function addTask(){
       tasks.push({id:nextId++,name:"New Task",sub:"Description",owner:"Owner",start:0,end:1,color:COLORS[0]});
-      saveTasks();render();
+      saveTasks(); render();
       var r=document.querySelector("[data-id=\""+(nextId-1)+"\" ] .task-name");
       if(r){r.focus();document.execCommand("selectAll",false,null);}
     }
     function cycleColor(id){
-      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
+      var task=tasks.filter(function(t){return t.id===id;})[0]; if(!task)return;
       var idx=COLORS.indexOf(task.color);
       task.color=COLORS[(idx+1)%COLORS.length];
       var dot=document.querySelector("[data-id=\""+id+"\"] .task-dot");
@@ -236,7 +277,7 @@
       saveTasks();
     }
     function saveField(id,field,value){
-      var task=tasks.filter(function(t){return t.id===id;})[0];if(!task)return;
+      var task=tasks.filter(function(t){return t.id===id;})[0]; if(!task)return;
       task[field]=value.trim();
       if(field==="name"){var bar=document.getElementById("bar"+id);if(bar){var nodes=bar.childNodes;for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType===3){nodes[i].textContent=task.name;break;}}}}
       saveTasks();
