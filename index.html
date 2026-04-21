@@ -68,6 +68,20 @@
     .save-indicator { position: fixed; bottom: 16px; right: 16px; background: #38a169; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .save-indicator.show { opacity: 1; }
     @media print { .download-pdf-btn { display: none !important; } body { padding: 0; background: #fff; } }
+
+    /* Dynamic Date Picker */
+    .date-picker-btn { display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.35); color:#fff; border-radius:6px; padding:4px 12px; font-size:11.5px; cursor:pointer; transition:background 0.2s; white-space:nowrap; font-family:inherit; pointer-events:all; margin-top:6px; }
+    .date-picker-btn:hover { background:rgba(255,255,255,0.22); }
+    #dpPopup { position:fixed; z-index:99999; background:#1a2a4a; border:1.5px solid rgba(255,255,255,0.25); border-radius:10px; padding:16px 18px; box-shadow:0 8px 32px rgba(0,0,0,0.55); color:#fff; font-family:inherit; min-width:240px; display:none; }
+    #dpPopup label { display:block; font-size:10.5px; opacity:0.7; margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em; }
+    #dpPopup input[type="date"] { width:100%; padding:7px 10px; border-radius:6px; box-sizing:border-box; border:1.5px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.08); color:#fff; font-size:14px; font-family:inherit; cursor:pointer; color-scheme:dark; }
+    #dpPopup input[type="date"]:focus { outline:none; border-color:rgba(255,255,255,0.6); }
+    #dpPopup .dp-row { display:flex; gap:8px; margin-top:12px; }
+    #dpPopup button { flex:1; padding:7px 0; border-radius:6px; border:none; font-size:13px; cursor:pointer; font-family:inherit; font-weight:600; }
+    #dpApplyBtn { background:#3182ce; color:#fff; }
+    #dpApplyBtn:hover { background:#2b6cb0; }
+    #dpCancelBtn { background:rgba(255,255,255,0.12); color:#fff; }
+    #dpCancelBtn:hover { background:rgba(255,255,255,0.22); }
   </style>
 </head>
 <body>
@@ -75,7 +89,11 @@
     <img class="header-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjEyIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iMTUiIHk9Ijc1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNTUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmYiPkQ8L3RleHQ+PHRleHQgeD0iNTIiIHk9IjQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmYiPlQ8L3RleHQ+PC9zdmc+" alt="DT Logo" />
     <div class="header-center">
       <h1>SW 11 SD Approval Roadmap</h1>
-      <p>1-Week Action Plan &middot; 30 March &ndash; 5 April 2026</p>
+      <p id="headerSubtitle">1-Week Action Plan &middot; 30 March &ndash; 5 April 2026</p>
+      <button class="date-picker-btn" onclick="dpToggle(event)" title="Change start date">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 6h14" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v2M11 1v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Change Start Date
+      </button>
     </div>
     <button class="download-pdf-btn" onclick="window.print()">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/></svg>
@@ -123,11 +141,11 @@
       {id:5,name:"Email Response plan to Emaar ID",sub:"Conf penthouse solution in writing",owner:"Jack",start:2,end:3,color:"#e53e3e"},
       {id:6,name:"ID SD Resubmission",sub:"Update PH timeline deliverables and include",owner:"ID Team",start:2,end:5,color:"#319795"},
       {id:7,name:"CIR to update ID for PD",sub:"update incon layouts",owner:"CIR",start:7,end:11,color:"#d69e2e"},
-      {id:8,name:"STR — Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:2,color:"#3182ce"},
-      {id:9,name:"BIM — Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:2,color:"#319795"},
-      {id:10,name:"STR Resubmission — confirmed by Monday",sub:"Get info for CIR sign-off",owner:"Jack",start:2,end:8,color:"#3182ce"},
-      {id:11,name:"BIM Status — Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
-      {id:12,name:"Consolidated Client Summary",sub:"All items closed — updated for Emaar mgmt",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"},
+      {id:8,name:"STR â Follow Up with Akram",sub:"Chase STR resubmission with Emaar STR lead",owner:"Jack / STR",start:0,end:2,color:"#3182ce"},
+      {id:9,name:"BIM â Follow Up with Huzaifa",sub:"Ensure BIM does not block DD",owner:"Bruno",start:0,end:2,color:"#319795"},
+      {id:10,name:"STR Resubmission â confirmed by Monday",sub:"Get info for CIR sign-off",owner:"Jack",start:2,end:8,color:"#3182ce"},
+      {id:11,name:"BIM Status â Confirmed Resolved",sub:"No BIM blockers for DD",owner:"Bruno",start:2,end:4,color:"#319795"},
+      {id:12,name:"Consolidated Client Summary",sub:"All items closed â updated for Emaar mgmt",owner:"Jack / Piyush",start:4,end:5,color:"#1a365d"},
       {id:13,name:"Client Approval",sub:"Obtain sign-off",owner:"Owner",start:4,end:5,color:"#6b46c1"},
       {id:14,name:"Arch FM Comments Close",sub:"Description",owner:"ARCH",start:2,end:8,color:"#38a169"},
       {id:15,name:"ARCH PD BIM UPDATE",sub:"area changes, previous PD comments, clinic, CIR ID updates",owner:"ARCH",start:0,end:5,color:"#38a169"},
@@ -284,6 +302,94 @@
     }
     function blurOnEnter(e){if(e.key==="Enter"){e.preventDefault();e.target.blur();}}
     render();
+
+    // ── Date Picker ───────────────────────────────────────────────────────────
+    (function(){
+      // Inject popup HTML
+      var pop = document.createElement("div");
+      pop.id = "dpPopup";
+      pop.innerHTML = '<label>Select Start Date</label>'+
+        '<input type="date" id="dpInput">'+
+        '<div class="dp-row"><button id="dpApplyBtn">Apply</button><button id="dpCancelBtn">Cancel</button></div>';
+      document.body.appendChild(pop);
+
+      function dpDayNames(){ return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]; }
+      function dpMonNames(){ return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; }
+
+      function dpGetCurrentStart(){
+        var d0=DAYS[0], parts=d0.date.split(" ");
+        var day=parseInt(parts[0]), mon=dpMonNames().indexOf(parts[1]);
+        var yr=new Date().getFullYear();
+        return new Date(yr,mon,day);
+      }
+
+      function dpToInputVal(d){
+        return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      }
+
+      function dpApply(val){
+        var p=val.split("-");
+        var start=new Date(+p[0],+p[1]-1,+p[2]);
+        var count=DAYS.length, dn=dpDayNames(), mn=dpMonNames();
+        DAYS.length=0;
+        for(var i=0;i<count;i++){
+          var d=new Date(start); d.setDate(start.getDate()+i);
+          DAYS.push({name:dn[d.getDay()],date:d.getDate()+" "+mn[d.getMonth()]});
+        }
+        render();
+        var sub=document.getElementById("headerSubtitle");
+        if(sub) sub.innerHTML="1-Week Action Plan &middot; "+DAYS[0].date+" &ndash; "+DAYS[DAYS.length-1].date+" "+start.getFullYear();
+        try{ localStorage.setItem("sw11_start_date",val); }catch(e){}
+      }
+
+      window.dpToggle=function(e){
+        e.stopPropagation();
+        var pop=document.getElementById("dpPopup");
+        if(pop.style.display!=="none"){ pop.style.display="none"; return; }
+        document.getElementById("dpInput").value=dpToInputVal(dpGetCurrentStart());
+        var btn=e.currentTarget, rect=btn.getBoundingClientRect();
+        pop.style.display="block";
+        pop.style.top=(rect.bottom+8)+"px";
+        pop.style.left=rect.left+"px";
+        setTimeout(function(){
+          var pr=pop.getBoundingClientRect();
+          if(pr.right>window.innerWidth-10) pop.style.left=(window.innerWidth-pr.width-10)+"px";
+        },10);
+      };
+
+      document.addEventListener("click",function(e){
+        var pop=document.getElementById("dpPopup");
+        if(pop&&pop.style.display!=="none"&&!pop.contains(e.target)){
+          var btn=document.querySelector(".date-picker-btn");
+          if(!btn||!btn.contains(e.target)) pop.style.display="none";
+        }
+      });
+
+      document.addEventListener("click",function(e){
+        if(e.target.id==="dpApplyBtn"){
+          e.stopPropagation();
+          var v=document.getElementById("dpInput").value;
+          if(v){ document.getElementById("dpPopup").style.display="none"; dpApply(v); }
+        }
+        if(e.target.id==="dpCancelBtn"){
+          e.stopPropagation();
+          document.getElementById("dpPopup").style.display="none";
+        }
+      });
+
+      document.addEventListener("keydown",function(e){
+        if(e.target.id==="dpInput"){
+          if(e.key==="Enter") document.getElementById("dpApplyBtn").click();
+          if(e.key==="Escape") document.getElementById("dpPopup").style.display="none";
+        }
+      });
+
+      // Restore saved start date
+      try{
+        var saved=localStorage.getItem("sw11_start_date");
+        if(saved) dpApply(saved);
+      }catch(e){}
+    })();
   </script>
 </body>
 </html>
